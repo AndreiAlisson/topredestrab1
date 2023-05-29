@@ -54,8 +54,8 @@ def handle_request(client_socket):
 # Define o endereço IP e a porta do servidor
 server_ip = 'localhost'
 server_port = 80
-cert_file = 'certificados/cert_server.crt'
-key_file = 'certificados/server.key'
+cert_file = 'certificados/server_cert.pem'
+key_file = 'certificados/server_key.pem'
 
 # Define configurações do banco de dados
 db_host = 'localhost'
