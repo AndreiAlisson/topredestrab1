@@ -14,7 +14,7 @@ Componentes do PostgreSQL
 pip install psycopg2
 ```
 
-Criação de certificados
+# Criação de certificados
 
 Criação das chaves e certificados:
 
