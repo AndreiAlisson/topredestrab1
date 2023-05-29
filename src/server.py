@@ -1,7 +1,7 @@
 # Programa que atua como servidor TCP para o sistema servidor/cliente
 # AUTORES
 # ANDREI ALISSON FERREIRA JULIO GRR20163061
-# JOÃO PEDRO KIERAS
+# JOÃO PEDRO KIERAS OLIVEIRA GRR20190379
 
 import socket
 import ssl
@@ -54,6 +54,8 @@ def handle_request(client_socket):
 # Define o endereço IP e a porta do servidor
 server_ip = 'localhost'
 server_port = 80
+cert_file = 'certificados/cert_server.crt'
+key_file = 'certificados/server.key'
 
 # Define configurações do banco de dados
 db_host = 'localhost'
@@ -73,13 +75,18 @@ server_socket.listen(5)
 
 print('Servidor pronto para receber conexões...')
 
-# Criação do contexto SSL/TLS #TODO
-"""ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-ssl_context.load_cert_chain('path/to/certificate.pem', 'path/to/private_key.pem')"""
+# Criação do contexto SSL/TLS 
+context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+context.load_cert_chain(certfile=cert_file, keyfile=key_file)
 
 # Loop para recepcionar requisições do cliente continuinamente
 while True:
+    # Aceita uma nova conexão
     client_socket, client_addr = server_socket.accept()
     print ('[*] Conexao aceita!')
-    client_handler = threading.Thread(target=handle_request, args=(client_socket,))
+
+    # Inicia camada de segurança SSL/TLS
+    secure_connection = context.wrap_socket(client_socket, server_side=True)
+
+    client_handler = threading.Thread(target=handle_request, args=(secure_connection,))
     client_handler.start()
