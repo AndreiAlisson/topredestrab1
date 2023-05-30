@@ -14,6 +14,12 @@ Componentes do PostgreSQL
 pip install psycopg2
 ```
 
+Versão mais recente do postgreSQL (15.3) Configurada no PC
+
+```bash
+https://www.postgresql.org/download/windows/
+```
+
 # Criação de certificados
 
 Criação das chaves e certificados:
