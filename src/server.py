@@ -18,8 +18,8 @@ temp_table_columns = 'id INTEGER, nome VARCHAR'
 # Define o endereço IP e a porta do servidor
 server_ip = 'localhost'
 server_port = 80
-cert_file = 'certificados/server_cert.pem'
-key_file = 'certificados/server_key.pem'
+cert_file = 'certificados/certificate-server.crt'
+key_file = 'certificados/certificate-server.key'
 
 # Define configurações do banco de dados configurado no PostgreSQL do servidor
 # NOTA: Necessário configurar banco no PC, baixando o PostgreSQL
@@ -169,8 +169,11 @@ server_socket.listen(5)
 print('Servidor pronto para receber conexões...')
 
 # Criação do contexto SSL/TLS 
-context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+#context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+context.load_verify_locations(cafile='certificados/certificate-client.crt')
 context.load_cert_chain(certfile=cert_file, keyfile=key_file)
+context.verify_mode = ssl.CERT_REQUIRED
 
 # Cria uma thread para poder interromper a execução do servidor
 server_status = threading.Thread(target=handle_server, args=(server_socket,))
