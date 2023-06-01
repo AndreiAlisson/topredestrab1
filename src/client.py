@@ -29,11 +29,31 @@ secure_socket = context.wrap_socket(client_socket, server_hostname=target_ip)
 secure_socket.connect((target_ip, target_port))
 
 # Envia uma mensagem de input do usuário para o servidor
-msg = input("digite uma mensagem para enviar ao servidor: ") 
-secure_socket.send(msg.encode('utf-8'))
+while True:
+    msg_input = input("Digite uma acao: 0-Select, 1-Insert, 2-Update, 3-Delete, 4-Exit\n")
+    if msg_input not in ['0', '1', '2', '3', '4']:
+        print ('Entrada incorreta')
+        continue
 
-# Recebe 4096 bits de resposta
-client_response = secure_socket.recv(4096)
+    if msg_input == '0':
+        print ('Digite os dados (Chave) a serem consultados no banco de dados')
+    elif msg_input == '1':
+        print ('Digite os dados (Chave, Valor) a serem inseridos no banco de dados')
+    elif msg_input == '2':
+        print ('Digite os dados (Chave, Valor antigo, Valor novo)a serem atualizados no banco de dados')
+    elif msg_input == '3':
+        print ('Digite os dados (Chave, Valor) a serem excluidos do banco de dados')
+    elif msg_input == '4':
+        print ('Encerrando cliente.')
+        break
+    print ('chegou')
+    cmd_input = input ("")
 
-# Imprime a resposta do servidor
-print(client_response)
+    cmd_input = msg_input + '|' + cmd_input
+    secure_socket.send(cmd_input.encode('utf-8'))
+
+    # Recebe 4096 bits de resposta
+    client_response = secure_socket.recv(4096)
+
+    # Imprime a resposta do servidor
+    print(client_response)
