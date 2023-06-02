@@ -13,7 +13,7 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 # Dados temporários do banco de dados
 temp_db_name = 'temp_database'
 temp_table_name = 'temp_table'
-temp_table_columns = 'id INTEGER, nome VARCHAR'
+temp_table_columns = 'id INTEGER, valor VARCHAR'
 
 # Define o endereço IP e a porta do servidor
 server_ip = 'localhost'
