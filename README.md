@@ -1,5 +1,5 @@
-# Introdução do Trabalho
-Trabalho de Tópicos em Redes de Computadores, apresentando uma implementação de um sistema cliente/servidor...
+# Introdução do Projeto
+Uma implementação simples de um sistema cliente/servidor seguro com TLS em python, com dados baseados em Key-Value. O sistema cria uma base de dados simples em um banco de dados PostgreSQL, e permite Consulta/Inclusão/Alteração/Exclusão de dados neste sistema.
 
 # Requisitos
 Python instalado na máquina
@@ -14,7 +14,7 @@ Componentes do PostgreSQL
 pip install psycopg2
 ```
 
-Versão mais recente do postgreSQL (15.3) Configurada no PC
+Versão mais recente do postgreSQL (15.3) Configurada no PC, utilizando as credenciais definidas no programa server.py, no comentário # NOTA1
 
 ```bash
 https://www.postgresql.org/download/windows/
@@ -56,3 +56,13 @@ Preencha as informações conforme necessário.
 openssl x509 -req -in client_csr.pem -CA server_cert.pem -CAkey server_key.pem -CAcreateserial -out client_cert.pem
 ```
 Agora, você terá os arquivos client_key.pem (chave privada do cliente) e client_cert.pem (certificado do cliente).
+
+### Execução
+Basta rodar os scripts para abrir uma conexão para o servidor, e outra para o cliente
+
+```
+$ python3 client.py
+```
+```
+$ python3 server.py
+```

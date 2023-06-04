@@ -8,11 +8,11 @@ import ssl
 
 # Define o endereço IP e a porta
 target_ip = 'localhost'
-target_port = 80
+target_port = 3000
 cert_file = 'certificados/certificate-client.crt'
 key_file = 'certificados/certificate-client.key'
 
-# Lida com os inputs do usuario para obter os detalhes da requisicao
+# Lida com os inputs do usuario para obter os detalhes da requisicao a ser feita
 def handle_input():
 
     # Recebe a ação a ser realizada
@@ -121,6 +121,7 @@ def handle_input():
 
     return cmd_input
 
+## Fluxo principal ## 
 
 # Envia uma mensagem de input do usuário para o servidor
 while True:
@@ -138,27 +139,25 @@ while True:
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Configuração do contexto SSL/TLS
-    #context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
     context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
     context.load_verify_locations(cafile='certificados/certificate-server.crt')
     context.load_cert_chain(certfile=cert_file, keyfile=key_file)
-
-    #context.check_hostname = False  # Desabilita verificação de hostname
     context.verify_mode = ssl.CERT_REQUIRED
+    #context.check_hostname = False  # Desabilita verificação de hostname
 
     # Inicia a camada de segurança SSL/TLS
     secure_socket = context.wrap_socket(client_socket, server_hostname=target_ip)
 
     # Conecta e envia uma mensagem para o servidor
     secure_socket.connect((target_ip, target_port))
-
     secure_socket.send(cmd_input.encode('utf-8'))
 
-    # Recebe 4096 bits de resposta
+    # Recebe 1024 bits de resposta
     client_response = secure_socket.recv(1024)
 
     # Imprime a resposta do servidor
     print(client_response)
 
+    # Fecha a conexão com os sockets
     secure_socket.close()
     client_socket.close()

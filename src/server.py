@@ -19,12 +19,12 @@ temp_table_columns = f'{temp_table_column_key} INTEGER, {temp_table_column_value
 
 # Define o endereço IP e a porta do servidor
 server_ip = 'localhost'
-server_port = 80
+server_port = 3000
 cert_file = 'certificados/certificate-server.crt'
 key_file = 'certificados/certificate-server.key'
 
 # Define configurações do banco de dados configurado no PostgreSQL do servidor
-# NOTA: Necessário configurar banco no PC, baixando o PostgreSQL
+# NOTA1: Necessário configurar banco no PC conforme as credenciais definidas aqui
 db_host = 'localhost'
 db_port = 5432
 db_name = 'postgres'
@@ -176,8 +176,9 @@ def handle_server(server_socket):
             break
 
 
-########## main ##########
+## Fluxo principal ##
 
+# Criação do banco de dados PSQL
 db_connection, db_cursor = create_database();
 
 # Criação do objeto socket
@@ -192,10 +193,10 @@ server_socket.listen(5)
 print('Servidor pronto para receber conexões...')
 
 # Criação do contexto SSL/TLS 
-#context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 context.load_verify_locations(cafile='certificados/certificate-client.crt')
 context.load_cert_chain(certfile=cert_file, keyfile=key_file)
+context.keylog_filename = './logs/keylog.log'
 context.verify_mode = ssl.CERT_REQUIRED
 
 # Cria uma thread para poder interromper a execução do servidor
@@ -216,7 +217,7 @@ while True:
     # Inicia camada de segurança SSL/TLS
     secure_connection = context.wrap_socket(client_socket, server_side=True)
 
-    # Cria uma thread pra processar a requisicao do cliente
+    # Cria uma thread pra processar a requisição do cliente
     client_handler = threading.Thread(target=handle_request, args=(secure_connection, db_connection,))
     client_handler.start()
 
