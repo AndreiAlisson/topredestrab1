@@ -64,4 +64,6 @@ Para simular uma tentativa de ataque ao sistema podemos utilizar como base o pr�
 ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate (_ssl.c:1131)
 ```
 
-O que comprova que a comunicação é, de fato, segura e garante autenticidade.
+O erro também ocorre caso o atacante tente se passar como servidor para enganar o cliente, o cliente verifica o certificado e, ao perceber que é diferente do certificado do servidor, nega a conexão.
+
+Comprovando, assim, que a comunicação é de fato segura e garante autenticidade.
