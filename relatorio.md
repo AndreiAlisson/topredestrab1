@@ -42,7 +42,7 @@ Neste ponto carregamos nosso próprio certificado juntamente com nossa chave pri
 ```
 context.load_cert_chain(certfile=cert_file, keyfile=key_file)
 ```
-Nesse ponto, se estivéssemos falando de programas executando no ambiente de produção de uma empresa, precisaríamos de uma terceira entidade na comunicação que faria a criação e autenticação destes certificados. Contudo, para fins didáticos e práticos, estamos utilizando certificados autoassinados para este trabalho.
+Se estivéssemos falando de programas executando no ambiente de produção de uma empresa, precisaríamos de uma terceira entidade na comunicação que faria a criação e autenticação destes certificados. Contudo, para fins didáticos e práticos, estamos utilizando certificados autoassinados para este trabalho.
 
 Agora, falando um pouco sobre o socket, criamos a camada de segurança utilizando aquele contexto criado anteriormente:
 ```
