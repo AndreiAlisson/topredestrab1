@@ -67,3 +67,6 @@ ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verif
 O erro também ocorre caso o atacante tente se passar como servidor para enganar o cliente, o cliente verifica o certificado e, ao perceber que é diferente do certificado do servidor, nega a conexão.
 
 Comprovando, assim, que a comunicação é de fato segura e garante autenticidade.
+
+Para garantir o sigilo podemos observar pelo Wireshark os pacotes que foram transmitidos durante a conexão.
+
