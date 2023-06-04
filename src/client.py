@@ -12,29 +12,127 @@ target_port = 80
 cert_file = 'certificados/certificate-client.crt'
 key_file = 'certificados/certificate-client.key'
 
+# Lida com os inputs do usuario para obter os detalhes da requisicao
+def handle_input():
+
+    # Recebe a ação a ser realizada
+    msg_input = input("Digite uma acao: 1-Select, 2-Insert, 3-Update, 4-Delete, 5-Exit: ")
+    if msg_input not in ['1', '2', '3', '4', '5']:
+        print ('Entrada Invalida, tente novamente')
+        return 'continue'
+
+    # Consulta (Chave ou valor)
+    if msg_input == '1':
+        msg_input += '|' + input('Digite o campo utilizado para consulta: 1-Chave, 2-Valor: ')
+        if msg_input not in ['1|1', '1|2']:
+            print ('Entrada invalida, tente novamente')
+            return 'continue'
+        
+        # Consulta por chave
+        if msg_input == '1|1':
+            msg_tmp = input ('Digite a Chave a ser consultada no banco de dados: ')
+
+            # Verifica se a chave digitada é um valor inteiro
+            if not (msg_tmp.isdigit()):
+                print ('Dado digitado deve ser inteiro, tente novamente')
+                return 'continue'
+            
+            msg_input += '|' + msg_tmp
+            
+        # Consulta por valor
+        elif msg_input == '1|2':
+            msg_tmp = input ('Digite o valor a ser consultado no banco de dados: ')
+
+            if msg_tmp == '':
+                print ('Dado nao pode ser vazio, tente novamente')
+                return 'continue'
+            
+            msg_input += '|' + msg_tmp
+
+        cmd_input = msg_input
+    
+    # Insert (Chave e Valor)
+    elif msg_input == '2':
+        msg_tmp = input ('Digite a Chave a ser inserida no banco de dados: ')
+
+        # Verifica se a chave digitada é um valor inteiro
+        if not (msg_tmp.isdigit()):
+            print ('Dado digitado deve ser inteiro, tente novamente')
+            return 'continue'
+        
+        msg_input += '|' + msg_tmp
+        
+        msg_tmp = input ('Digite o valor a ser inserido no banco de dados: ')
+
+        if msg_tmp == '':
+            print ('Dado nao pode ser vazio, tente novamente')
+            return 'continue'
+        
+        msg_input += '|' + msg_tmp
+
+        cmd_input = msg_input
+        
+    # Update (Chave e valor)
+    elif msg_input == '3':
+        msg_tmp = input ('Digita a chave do dado a ser atualizado: ')
+
+         # Verifica se a chave digitada é um valor inteiro
+        if not (msg_tmp.isdigit()):
+            print ('Dado digitado deve ser inteiro, tente novamente')
+            return 'continue'
+        
+        msg_input += '|' + msg_tmp
+
+        msg_tmp = input ('Digite o novo valor a ser atualizado no banco de dados: ')
+
+        if msg_tmp == '':
+            print ('Dado nao pode ser vazio, tente novamente')
+            return 'continue'
+        
+        msg_input += '|' + msg_tmp
+
+        cmd_input = msg_input
+
+    # Delete (Chave)
+    elif msg_input == '4':
+        msg_tmp = input ('Digite a Chave a ser excluida do banco de dados: ')
+
+        # Verifica se a chave digitada é um valor inteiro
+        if not (msg_tmp.isdigit()):
+            print ('Dado digitado deve ser inteiro, tente novamente')
+            return 'continue'
+        
+        msg_input += '|' + msg_tmp
+
+        cmd_input = msg_input
+
+    # Encerra o programa
+    elif msg_input == '5':
+        print ('Encerrando cliente.')
+        return 'exit'
+
+
+    # Caso algo dê errado
+    if cmd_input == '':
+        print ('Entrada invalida')
+        return 'continue'
+
+    print ('comando a ser enviado: ' + cmd_input)
+
+    return cmd_input
+
 
 # Envia uma mensagem de input do usuário para o servidor
 while True:
-    msg_input = input("Digite uma acao: 0-Select, 1-Insert, 2-Update, 3-Delete, 4-Exit\n")
-    if msg_input not in ['0', '1', '2', '3', '4']:
-        print ('Entrada incorreta')
+
+    # Lida com os inputs do usuario para saber como proceder
+    cmd_input = handle_input()
+
+    if cmd_input == 'continue':
         continue
 
-    if msg_input == '0':
-        print ('Digite os dados (Chave) a serem consultados no banco de dados')
-    elif msg_input == '1':
-        print ('Digite os dados (Chave, Valor) a serem inseridos no banco de dados')
-    elif msg_input == '2':
-        print ('Digite os dados (Chave, Valor novo) a serem atualizados no banco de dados')
-    elif msg_input == '3':
-        print ('Digite os dados (Chave, Valor) a serem excluidos do banco de dados')
-    elif msg_input == '4':
-        print ('Encerrando cliente.')
+    if cmd_input == 'exit':
         break
-
-    cmd_input = input ("")
-
-    cmd_input = msg_input + '|' + cmd_input
 
     # Criação do objeto socket
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

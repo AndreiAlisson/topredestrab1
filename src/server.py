@@ -13,7 +13,9 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 # Dados temporários do banco de dados
 temp_db_name = 'temp_database'
 temp_table_name = 'temp_table'
-temp_table_columns = 'id INTEGER, valor VARCHAR'
+temp_table_column_key = 'chave'
+temp_table_column_value = 'valor'
+temp_table_columns = f'{temp_table_column_key} INTEGER, {temp_table_column_value} VARCHAR'
 
 # Define o endereço IP e a porta do servidor
 server_ip = 'localhost'
@@ -27,7 +29,7 @@ db_host = 'localhost'
 db_port = 5432
 db_name = 'postgres'
 db_user = 'postgres'
-db_password = 'andrei'
+db_password = 'andreijoao'
 
 # Conexão com o banco de dados
 def connect_database():
@@ -60,8 +62,8 @@ def create_database():
     # Cria uma tabela temporária
     cursor.execute(f"CREATE TABLE {temp_table_name} ({temp_table_columns})")
 
-    # Reseta os dados da tabela caso já exista
-    cursor.execute(f"DELETE FROM {temp_table_name}")
+    # Setta a chave primária do banco de dados
+    cursor.execute(f"ALTER TABLE {temp_table_name} ADD CONSTRAINT cst_01 PRIMARY KEY ({temp_table_column_key})")
 
     # Adiciona dados temporários
     temp_table_values = "1, 'ANDREI'"
@@ -72,52 +74,73 @@ def create_database():
 
     return conn, cursor
 
+# Executa uma query no banco de dados, retornando uma mensagem de acordo com o tipo da query
+def execute_query (query, cursor, action):
+    try:
+        cursor.execute(query)
+
+        if action == 'select':
+            result = '\n'.join([', '.join(map(str, row)) for row in cursor.fetchall()])
+        elif action == 'insert':
+            result = 'Dados inseridos com sucesso'
+        elif action == 'update':
+            result = 'Dados atualizados com sucesso'
+        elif action == 'delete':
+            result = 'Dados excluidos com sucesso'   
+    except Exception as e:
+        result = str(e)
+
+    return result
+
 # Executa a consulta de dados e retorna todas as colunas de resposta
 def handle_query(db_connection, client_response):
     cursor = db_connection.cursor()
 
+    results = ''
+
     # Separa a ação (Insert/Update/Delete) e o comand
+    print ('Requisicao do cliente: ' + client_response)
+
+    # Ação do usuário
     action = client_response.split("|")[0]
-    command = client_response.split("|")[1]
 
-    print (f"Action: {action} - Command: {command}")
-    # Consulta
-    if action == '0':
-        key = command.strip()
-        try:
-            cursor.execute(f"SELECT * FROM {temp_table_name} WHERE id = {key}")
-            results = '\n'.join([', '.join(map(str, row)) for row in cursor.fetchall()])
-        except Exception as e:
-            results = str(e)
-    # Insert
-    elif action == '1':
-        key = command.split(",")[0].strip()
-        value = command.split(",")[1].strip()
-        try:
-            cursor.execute(f"INSERT INTO {temp_table_name} VALUES  ({key}, '{value}')")
-            results = "Dados inseridos com sucesso"
-        except Exception as e:
-            results = str(e)
-    # Update
+    # Consulta (Chave ou valor)
+    if action == '1':
+
+        # Verifica se é consulta por chave ou por valor
+        action = client_response.split("|")[1]
+
+        # Consulta por chave
+        if action == '1':
+            key = client_response.split("|")[2].strip()
+            print ('key: ' + key)
+            results = execute_query(f"SELECT * FROM {temp_table_name} WHERE {temp_table_column_key} = {key}", cursor, 'select')
+
+        # Consulta por valor
+        elif action == '2':
+            value = client_response.split("|")[2].strip()
+            results = execute_query(f"SELECT * FROM {temp_table_name} WHERE {temp_table_column_value} ILIKE '%{value}%'", cursor, 'select')
+
+    # Insert (Chave e valor)
     elif action == '2':
-        key = command.split(",")[0].strip()
-        value = command.split(",")[1].strip()
-        try:
-            cursor.execute(f"UPDATE {temp_table_name} SET valor = '{value}' WHERE id = {key}")
-            results = "Dados atualizados com sucesso"
-        except Exception as e:
-            results = str(e)
-    # Delete
-    elif action == '3':
-        key = command.strip()
-        try:
-            cursor.execute(f"DELETE FROM {temp_table_name} WHERE id = {key}")
-            results = "Dados excluidos com sucesso"
-        except Exception as e:
-            results = str(e)
+        key = client_response.split("|")[1].strip()
+        value = client_response.split("|")[2].strip()
 
-    #cursor.execute(f'SELECT * FROM {temp_table_name}')
-    # results = cursor.fetchall()
+        results = execute_query(f"INSERT INTO {temp_table_name} VALUES  ({key}, '{value}')", cursor, 'insert')
+
+    # Update (Chave e valor)
+    elif action == '3':
+        key = client_response.split("|")[1].strip()
+        value = client_response.split("|")[2].strip()
+
+        results = execute_query(f"UPDATE {temp_table_name} SET {temp_table_column_value} = '{value}' WHERE {temp_table_column_key} = {key}", cursor, 'update')
+
+    # Delete (Chave)
+    elif action == '4':
+        key = client_response.split("|")[1].strip()
+
+        results = execute_query(f"DELETE FROM {temp_table_name} WHERE {temp_table_column_key} = {key}", cursor, 'delete')
+
     cursor.close()
     return results
 
