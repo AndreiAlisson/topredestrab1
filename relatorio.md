@@ -2,6 +2,7 @@
 ## Cliente-Servidor KVS seguro com TLS
 ### Andrei Alisson Ferreira Julio e João Pedro Kieras Oliveira
 
+### Funcionamento do TLS
 O trabalho foi implementado inteiramente em linguagem Python. São dois arquivos fonte: client.py e server.py .
 Para executar os mesmos, basta:
 ```
@@ -54,3 +55,13 @@ E então, fazemos a conexão e enviamos uma mensagem utilizando como parâmetros
 secure_socket.connect((target_ip, target_port))
 secure_socket.send(...)
 ```
+
+### Tentativa de ataque
+
+Para simular uma tentativa de ataque ao sistema podemos utilizar como base o próprio programa client.py alterando o certificado e a chave privada. Um atacante, por mais que soubesse o endereço IP do servidor e as portas utilizadas, muito dificilmente teria acesso aos certificados usados na comunicação pois essa parte é feito por uma organização terceira. Ao tentar utilizar um certificado e chave privada diferente do que o servidor aceita e conhece, obtemos o seguinte erro (por parte do servidor) ao tentar executar o programa:
+
+```bash
+ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate (_ssl.c:1131)
+```
+
+O que comprova que a comunicação é, de fato, segura e garante autenticidade.
