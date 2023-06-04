@@ -44,7 +44,13 @@ context.load_cert_chain(certfile=cert_file, keyfile=key_file)
 ```
 Se estivéssemos falando de programas executando no ambiente de produção de uma empresa, precisaríamos de uma terceira entidade na comunicação que faria a criação e autenticação destes certificados. Contudo, para fins didáticos e práticos, estamos utilizando certificados autoassinados para este trabalho.
 
-Agora, falando um pouco sobre o socket, criamos a camada de segurança utilizando aquele contexto criado anteriormente:
+Agora, falando um pouco sobre o socket, criamos a camada de segurança utilizando aquele contexto criado anteriormente e passamos como parâmetro nosso próprio socket e o IP destino:
 ```
-secure_socket = context.wrap_socket(client_socket, server_hostname=target_ip)
+secure_socket = context.wrap_socket(nosso_socket, server_hostname=target_ip)
+```
+
+E então, fazemos a conexão e enviamos uma mensagem utilizando como parâmetros o IP e porta do destino:
+```
+secure_socket.connect((target_ip, target_port))
+secure_socket.send(...)
 ```
