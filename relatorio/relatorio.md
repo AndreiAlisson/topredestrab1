@@ -70,3 +70,7 @@ Comprovando, assim, que a comunicação é de fato segura e garante autenticidad
 
 Para garantir o sigilo podemos observar pelo Wireshark os pacotes que foram transmitidos durante a conexão.
 
+![Screenshot Wireshark](img/wireshark-trab.png)
+
+Na hora que vamos criar um certificado são feitas uma série de perguntas para garantir uma certa legitimidade do mesmo. Quando criamos os certificados para este trabalho foram perguntadas coisas como "Qual o seu país?" "Qual seu estado?" e "Qual sua cidade?" dentre muitas outras. Respondemos as perguntas com "BR", "parana" e "curitiba" respectivamente.
+Conseguimos ver no payload do pacote essas informações do certificado, assim, a comunicação de fato usa essa ferramenta de segurança e conseguimos ver também que toda a informação está cifrada. A mensagem enviada na verdade foi uma string 'bbb' mas podemos ver no pacote vários caracteres aleatorizados o que confirma que está tudo criptografado de fato.
