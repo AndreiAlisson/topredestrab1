@@ -2,6 +2,7 @@
 ## Cliente-Servidor KVS seguro com TLS
 ### Andrei Alisson Ferreira Julio e João Pedro Kieras Oliveira
 
+### Funcionamento do TLS
 O trabalho foi implementado inteiramente em linguagem Python. São dois arquivos fonte: client.py e server.py .
 Para executar os mesmos, basta:
 ```
@@ -42,9 +43,27 @@ Neste ponto carregamos nosso próprio certificado juntamente com nossa chave pri
 ```
 context.load_cert_chain(certfile=cert_file, keyfile=key_file)
 ```
-Nesse ponto, se estivéssemos falando de programas executando no ambiente de produção de uma empresa, precisaríamos de uma terceira entidade na comunicação que faria a criação e autenticação destes certificados. Contudo, para fins didáticos e práticos, estamos utilizando certificados autoassinados para este trabalho.
+Se estivéssemos falando de programas executando no ambiente de produção de uma empresa, precisaríamos de uma terceira entidade na comunicação que faria a criação e autenticação destes certificados. Contudo, para fins didáticos e práticos, estamos utilizando certificados autoassinados para este trabalho.
 
-Agora, falando um pouco sobre o socket, criamos a camada de segurança utilizando aquele contexto criado anteriormente:
+Agora, falando um pouco sobre o socket, criamos a camada de segurança utilizando aquele contexto criado anteriormente e passamos como parâmetro nosso próprio socket e o IP destino:
 ```
-secure_socket = context.wrap_socket(client_socket, server_hostname=target_ip)
+secure_socket = context.wrap_socket(nosso_socket, server_hostname=target_ip)
 ```
+
+E então, fazemos a conexão e enviamos uma mensagem utilizando como parâmetros o IP e porta do destino:
+```
+secure_socket.connect((target_ip, target_port))
+secure_socket.send(...)
+```
+
+### Tentativa de ataque
+
+Para simular uma tentativa de ataque ao sistema podemos utilizar como base o próprio programa client.py alterando o certificado e a chave privada. Um atacante, por mais que soubesse o endereço IP do servidor e as portas utilizadas, muito dificilmente teria acesso aos certificados usados na comunicação pois essa parte é feito por uma organização terceira. Ao tentar utilizar um certificado e chave privada diferente do que o servidor aceita e conhece, obtemos o seguinte erro (por parte do servidor) ao tentar executar o programa:
+
+```bash
+ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate (_ssl.c:1131)
+```
+
+O erro também ocorre caso o atacante tente se passar como servidor para enganar o cliente, o cliente verifica o certificado e, ao perceber que é diferente do certificado do servidor, nega a conexão.
+
+Comprovando, assim, que a comunicação é de fato segura e garante autenticidade.
