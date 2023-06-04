@@ -2,7 +2,7 @@
 ## Cliente-Servidor KVS seguro com TLS
 ### Andrei Alisson Ferreira Julio e João Pedro Kieras Oliveira
 
-O trabalho foi imlpementado inteiramente em linguagem Python. São dois arquivos fonte: client.py e server.py .
+O trabalho foi implementado inteiramente em linguagem Python. São dois arquivos fonte: client.py e server.py .
 Para executar os mesmos, basta:
 ```
 $ python3 client.py
